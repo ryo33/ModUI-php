@@ -20,7 +20,7 @@ class ModUI{
         }
         $templates = [$name=>$template];
         $values = [];
-        $scripts = [];
+        $scripts = [$script];
         foreach($this->components as $key => $component){
             $templates = array_merge($templates, $component->get_templates($this->get_child_name($name, $key)));
             $scripts = array_merge($scripts, $component->get_scripts($this->get_child_name($name, $key)));
