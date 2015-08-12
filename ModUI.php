@@ -35,7 +35,7 @@ class ModUI{
         $components[$result[0]]->input($result[1], $value);
     }
 
-    public static function get_name($base, $name){
+    public static function get_child_name($base, $name){
         return $base . self::SEPARATOR . $name;
     }
 
