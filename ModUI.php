@@ -40,7 +40,7 @@ JS
     }
 
     public static function get_lwte_use($template_name, $name){
-        return '{use ' . $template_name . ' ' . $name . '}';
+        return "<span id=\"$name--span\">{use $template_name $name}</span>";
     }
 
     public static function get_child_name($base, $name){
