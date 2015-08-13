@@ -5,9 +5,9 @@ class ModUI{
     private $container;
     private $name;
     private $selector;
-    private static $update_script = <<<JS
-JS
-    ;
+    private $auto_reload_time = 0;
+    private $auto_reload_script = null;
+
     const SEPARATOR = '_';
 
     public function __construct($name, $container){
@@ -19,8 +19,31 @@ JS
         $templates = $this->container->get_templates($this->name);
         $values = $this->container->get_values($this->name);
         $values['name'] = $this->name;
+        $values['template_name'] = $this->name;
         $scripts = $this->container->get_scripts($this->name);
         $script = self::get_script($this->name, $scripts);
+        if($this->auto_reload_time !== 0 && $this->auto_reload_script !== null){
+            $old_values = json_encode($values);
+            $script .= <<<JS
+old_values = $old_values;
+setInterval({$this->auto_reload_script}, {$this->auto_reload_time});
+function update_auto(name, new_data, lwte){
+    update_auto_body(name, new_data.template_name, old_values, new_data, null, lwte);
+    old_values = new_data;
+}
+function update_auto_body(name, template_name, old_data, new_data, new_data2, lwte){
+    if(new_data.name == name && old_data.name == name && new_data.template_name != undefined && new_data.template_name == old_data.template_name){
+        for(var key in old_data){
+            update_auto_body(key, new_data.template_name, old_data[key], new_data[key], new_data, lwte);
+        }
+    }else{
+        if(old_data != new_data){
+            document.getElementById(new_data2.name + "--span").innerHTML = lwte.useTemplate(template_name, new_data2);
+        }
+    }
+}
+JS;
+        }
         return ['templates' => $templates, 'values' => $values, 'script' => $script];
     }
 
@@ -30,13 +53,22 @@ JS
             $name = $params['name'];
             $value = json_decode($params['value'], true);
             $name = self::get_name($name);
-            echo json_encode($this->container->input($name[1], $value));
-            exit();
+            $this->container->input($name[1], $value);
         }
+        $values = $this->container->get_values($this->name);
+        $values['name'] = $this->name;
+        $values['template_name'] = $this->name;
+        echo json_encode($values);
+        exit();
     }
 
     public function add($component){
         $this->container->add($component);
+    }
+
+    public function enable_auto_reload($time, $script){
+        $this->auto_reload_time = $time;
+        $this->auto_reload_script = $script;
     }
 
     public static function get_lwte_use($template_name, $name){
@@ -54,7 +86,6 @@ JS
     public static function get_script($name, $scripts){
         $get_value_script = $scripts[0];
         $script = $scripts[1];
-        $update_script = self::$update_script;
         return <<<JS
 function update_$name(){
     (update_modui("$name", get_value_$name()));
