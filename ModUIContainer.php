@@ -25,7 +25,8 @@ abstract class ModUIContainer extends ModUIComponent{
         $values = ['name' => $name];
         foreach($this->components as $key => $component){
             $values[ModUI::get_child_name($name, $key)] =
-                array_merge(['name' => ModUI::get_child_name($name, $key)], $component->get_values(ModUI::get_child_name($name, $key)));
+                array_merge(['name' => ModUI::get_child_name($name, $key), 'template_name' => $component->get_template_name(ModUI::get_child_name($name, $key))],
+                    $component->get_values(ModUI::get_child_name($name, $key)));
         }
         return $values;
     }
@@ -33,6 +34,7 @@ abstract class ModUIContainer extends ModUIComponent{
     public function get_scripts($name){
         $get_value_script = [];
         $script = '';
+        $template_names = [];
         foreach($this->components as $key => $component){
             $scripts = $component->get_scripts(ModUI::get_child_name($name, $key));
             $script .= ModUI::get_script(ModUI::get_child_name($name, $key), $scripts);
@@ -48,13 +50,11 @@ abstract class ModUIContainer extends ModUIComponent{
     public function input($name, $value){
         if(strlen($name) !== 0){
             $result = ModUI::get_name($name);
-            return $this->components[$result[0]]->input($result[1], $value);
+            $this->components[$result[0]]->input($result[1], $value);
         }else{
-            $values = [];
             foreach($this->components as $key => $component){
-                $values[$key] = $component->input('', $value[$key]);
+                $component->input('', $value[$key]);
             }
-            return $values;
         }
     }
 

@@ -15,7 +15,7 @@ class NormalContainer extends ModUIContainer{
     }
 
     protected function get_script($name){
-        return 'update();';
+        return '';
     }
 
 }
