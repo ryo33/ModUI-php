@@ -31,24 +31,31 @@ abstract class ModUIContainer extends ModUIComponent{
     }
 
     public function get_scripts($name){
+        $get_value_script = [];
         $script = '';
         foreach($this->components as $key => $component){
             $scripts = $component->get_scripts(ModUI::get_child_name($name, $key));
             $script .= ModUI::get_script(ModUI::get_child_name($name, $key), $scripts);
+            $child_name = ModUI::get_child_name($name, $key);
+            $get_value_script[] = "\"$key\": get_value_$child_name()";
         }
-        return [$this->get_update_script($name), $script];
+        $get_value_script = 'function($name){return {' . implode(', ', $get_value_script) . '};}';
+        return [$get_value_script, $this->get_script($name) . $script];
     }
 
-    abstract protected function get_update_script($name);
+    abstract protected function get_script($name);
 
     public function input($name, $value){
-        $result = ModUI::get_name($name);
-        $this->components[$result[0]]->input($result[1], $value);
-    }
-
-    public static function get_name($source){
-        $name = explode(ModUI::SEPARATOR, $source, 1);
-        return [$name[0], substr($source, strlen($name[0]) + strlen(ModUI::SEPARATOR))];
+        if(strlen($name) !== 0){
+            $result = ModUI::get_name($name);
+            return $this->components[$result[0]]->input($result[1], $value);
+        }else{
+            $values = [];
+            foreach($this->components as $key => $component){
+                $values[$key] = $component->input('', $value[$key]);
+            }
+            return $values;
+        }
     }
 
 }
