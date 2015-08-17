@@ -62,8 +62,8 @@ JS;
         exit();
     }
 
-    public function add($component){
-        $this->container->add($component);
+    public function add($component, $hook_function=null){
+        $this->container->add($component, $hook_function);
     }
 
     public function enable_auto_reload($time, $script){
