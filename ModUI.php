@@ -17,11 +17,9 @@ class ModUI{
 
     public function display(){
         $templates = $this->container->get_templates($this->name);
-        $values = $this->container->get_values($this->name);
-        $values['name'] = $this->name;
-        $values['template_name'] = $this->name;
         $scripts = $this->container->get_scripts($this->name);
         $script = self::get_script($this->name, $scripts);
+        $values = $this->get_values();
         if($this->auto_reload_time !== 0 && $this->auto_reload_script !== null){
             $old_values = json_encode($values);
             $script .= <<<JS
@@ -47,6 +45,13 @@ JS;
         return ['templates' => $templates, 'values' => $values, 'script' => $script];
     }
 
+    public function get_values(){
+        $values = $this->container->get_values($this->name);
+        $values['name'] = $this->name;
+        $values['template_name'] = $this->name;
+        return $values;
+    }
+
     public function input($params){
         header('Content-Type: application/json');
         if(isset($params['name'], $params['value'])){
@@ -55,9 +60,7 @@ JS;
             $name = self::get_name($name);
             $this->container->input($name[1], $value);
         }
-        $values = $this->container->get_values($this->name);
-        $values['name'] = $this->name;
-        $values['template_name'] = $this->name;
+        $values = $this->get_values();
         echo json_encode($values);
         exit();
     }
