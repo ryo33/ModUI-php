@@ -2,13 +2,20 @@
 
 abstract class ModUIContainer extends ModUIComponent{
 
-    protected $components;
+    protected $component;
+    protected $hooks;
     public function __construct(){
         $this->components = [];
+        $this->hooks = [];
     }
 
-    public function add($component){
+    public function add($component, $hook_function=null){
         $this->components[] = $component;
+        if($hook_function !== null){
+            $this->hooks[] = $hook_function;
+        }else{
+            $this->hooks[] = function(){};
+        }
     }
 
     public function get_templates($name){
@@ -51,9 +58,11 @@ abstract class ModUIContainer extends ModUIComponent{
         if(strlen($name) !== 0){
             $result = ModUI::get_name($name);
             $this->components[$result[0]]->input($result[1], $value);
+            $this->hooks[$result[0]]();
         }else{
             foreach($this->components as $key => $component){
                 $component->input('', $value[$key]);
+                $this->hooks[$key]();
             }
         }
     }
