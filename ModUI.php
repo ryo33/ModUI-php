@@ -95,7 +95,7 @@ JS;
             $script = $script[0];
         }
         if(strlen($script) > 0){
-            $script = '(' . $script . '(update_' . $name . ', "' . $name . '"))';
+            $script = '(' . $script . '(update_' . $name . ', "' . $name . '"));';
         }
         return <<<JS
 function update_$name(){
