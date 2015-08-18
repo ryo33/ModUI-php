@@ -89,6 +89,14 @@ JS;
     public static function get_script($name, $scripts){
         $get_value_script = $scripts[0];
         $script = $scripts[1];
+        $script2 = '';
+        if(is_array($script)){
+            $script2 = $script[1];
+            $script = $script[0];
+        }
+        if(strlen($script) > 0){
+            $script = '(' . $script . '(update_' . $name . ', "' . $name . '"))';
+        }
         return <<<JS
 function update_$name(){
     (update_modui("$name", get_value_$name()));
@@ -96,7 +104,8 @@ function update_$name(){
 function get_value_$name(){
     return ($get_value_script("$name"));
 }
-($script(update_$name, "$name"));
+$script
+$script2
 JS;
     }
 

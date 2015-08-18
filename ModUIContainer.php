@@ -49,7 +49,7 @@ abstract class ModUIContainer extends ModUIComponent{
             $get_value_script[] = "\"$key\": get_value_$child_name()";
         }
         $get_value_script = 'function($name){return {' . implode(', ', $get_value_script) . '};}';
-        return [$get_value_script, $this->get_script($name) . $script];
+        return [$get_value_script, [$this->get_script($name), $script]];
     }
 
     abstract protected function get_script($name);
