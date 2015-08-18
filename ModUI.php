@@ -96,9 +96,7 @@ function update_$name(){
 function get_value_$name(){
     return ($get_value_script("$name"));
 }
-var update = update_$name;
-var selector = "$name";
-$script
+($script(update_$name, "$name"));
 JS;
     }
 
