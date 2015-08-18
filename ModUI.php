@@ -30,7 +30,8 @@ function update_auto(name, new_data, lwte){
     old_values = new_data;
 }
 function update_auto_body(name, template_name, old_data, new_data, new_data2, lwte){
-    if(new_data.name == name && old_data.name == name && new_data.template_name != undefined && new_data.template_name == old_data.template_name){
+    if(new_data != null && old_data != null && new_data.name == name && old_data.name == name &&
+            new_data.template_name != undefined && new_data.template_name == old_data.template_name){
         for(var key in old_data){
             update_auto_body(key, new_data.template_name, old_data[key], new_data[key], new_data, lwte);
         }
@@ -95,7 +96,7 @@ JS;
             $script = $script[0];
         }
         if(strlen($script) > 0){
-            $script = '(' . $script . '(update_' . $name . ', "' . $name . '"))';
+            $script = '(' . $script . '(update_' . $name . ', "' . $name . '"));';
         }
         return <<<JS
 function update_$name(){
