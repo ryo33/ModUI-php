@@ -29,10 +29,10 @@ abstract class ModUIContainer extends ModUIComponent{
     abstract protected function get_template($name);
 
     public function get_values($name){
-        $values = ['name' => $name];
+        $values = ['_name' => $name];
         foreach($this->components as $key => $component){
             $values[ModUI::get_child_name($name, $key)] =
-                array_merge(['name' => ModUI::get_child_name($name, $key), 'template_name' => $component->get_template_name(ModUI::get_child_name($name, $key))],
+                array_merge(['_name' => ModUI::get_child_name($name, $key), '_template_name' => $component->get_template_name(ModUI::get_child_name($name, $key))],
                     $component->get_values(ModUI::get_child_name($name, $key)));
         }
         return $values;
@@ -43,16 +43,15 @@ abstract class ModUIContainer extends ModUIComponent{
         $script = '';
         $template_names = [];
         foreach($this->components as $key => $component){
-            $scripts = $component->get_scripts(ModUI::get_child_name($name, $key));
-            $script .= ModUI::get_script(ModUI::get_child_name($name, $key), $scripts);
+            $script .= ModUI::get_script(ModUI::get_child_name($name, $key), $component->get_scripts(ModUI::get_child_name($name, $key)));
             $child_name = ModUI::get_child_name($name, $key);
-            $get_value_script[] = "\"$key\": get_value_$child_name()";
+            $get_value_script[] = "\"$key\": _modui_get_value_$child_name()";
         }
         $get_value_script = 'function($name){return {' . implode(', ', $get_value_script) . '};}';
-        return [$get_value_script, [$this->get_script($name), $script]];
+        return ['value' => $get_value_script, 'event' => $this->get_update_script($name), 'other' => $script];
     }
 
-    abstract protected function get_script($name);
+    abstract protected function get_update_script($name);
 
     public function input($name, $value){
         if(strlen($name) !== 0){
