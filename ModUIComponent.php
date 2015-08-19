@@ -8,7 +8,7 @@ abstract class ModUIComponent{
 
     abstract public function get_values($name);
 
-    abstract public function get_scripts($name);
+    public function get_scripts($name){ return []; }
 
     abstract public function input($name, $value);
 
