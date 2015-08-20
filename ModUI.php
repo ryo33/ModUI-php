@@ -20,7 +20,7 @@ class ModUI{
         $script = self::get_script($this->name, $this->container->get_scripts($this->name));
         $script .= <<<JS
 function _modui_update(name, value){
-    ($update_script(name, value, _modui_update_auto));
+    !$update_script(name, value, _modui_update_auto);
 }
 _modui_modified = false;
 function _modui_modify(){
@@ -49,7 +49,7 @@ JS;
             $script .= <<<JS
 _modui_old_values = $old_values;
 setInterval(function(){
-    ($auto_reload_script(_modui_update_auto));
+    !$auto_reload_script(_modui_update_auto);
 }, $auto_reload_time);
 JS;
         }
@@ -97,10 +97,10 @@ JS;
         }
         return <<<JS
 function _modui_update_$name(){
-    (_modui_update("$name", _modui_get_value_$name()));
+    _modui_update("$name", _modui_get_value_$name());
 }
 function _modui_get_value_$name(){
-    return ($value_script("$name"));
+    return !$value_script("$name");
 }
 $event_script
 $other_script
