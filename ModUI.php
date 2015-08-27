@@ -45,6 +45,7 @@ function _modui_update_auto_body(name, template_name, old_data, new_data, new_da
 }
 function is_equal(old_data, new_data){
     if(old_data instanceof Object){
+        if(!(new_data instanceof Object)) return false;
         for(var key in old_data){
             if(!(key in new_data)) return false;
             if(!is_equal(old_data[key], new_data[key])) return false;
