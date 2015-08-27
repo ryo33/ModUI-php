@@ -1,10 +1,10 @@
 <?php
 
-abstract class ModUIComponent{
+class ModUIComponent{
 
-    abstract public function get_template_name($name);
+    public function get_template_name($name){ return $name; }
 
-    abstract public function get_templates($name);
+    public function get_templates($name){ return [$this->get_template_name() => '']; }
 
     public function get_values($name){ return []; }
 
