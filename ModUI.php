@@ -38,9 +38,20 @@ function _modui_update_auto_body(name, template_name, old_data, new_data, new_da
             _modui_update_auto_body(key, new_data._template_name, old_data[key], new_data[key], new_data);
         }
     }else{
-        if(old_data != new_data){
+        if(!is_equal(old_data, new_data)){
             document.getElementById(new_data2._name + "--span").innerHTML = {$this->lwte}.useTemplate(template_name, new_data2);
         }
+    }
+}
+function is_equal(old_data, new_data){
+    if(old_data instanceof Object){
+        for(var key in old_data){
+            if(new_data[key] === undefined) return false;
+            if(!is_equal(old_data[key], new_data[key])) return false;
+        }
+        return true;
+    }else{
+        return (old_data == new_data);
     }
 }
 JS;
