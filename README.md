@@ -8,7 +8,7 @@ Modular User Interface
 * Create a instance of any components which inherited `ModUIContainer`.  
 `$nc = new NormalContainer();`
 * Create a instance of `ModUI`.  
-`$mod = new ModUI($nc);`
+`$mod = new ModUI("TEMPLATE_NAME", $nc);`
 * Add your containers and components to `$mod` or `$nc` or **your countainers**.  
 `$mod->add(new YOUR_COMPONENT());`
 * Write if-statement which detects request method `GET` or `POST`.  
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === "GET") {
   // GET
   // Print header of your page.
   echo '<script>';
-  $result = $mod->display('example', <<<EOJS
+  $result = $mod->display(<<<EOJS
     function(name, value, update){
       // If you use jQuery
       $.ajax({
@@ -49,7 +49,7 @@ EOJS
       });
     }
 EOJS
-  );
+  , 5000); // Your page will be updated every 5 seconds.
   foreach ($result['templates'] as $name => $template) {
     // Remove newline characters from $template, if your templates include them.
     echo 'lwte.addTemplate("$name", "$template");
@@ -66,3 +66,37 @@ EOJS
   $mod->input($_POST);
 ```
 * That's all. Your page works.
+
+#Example Component
+* textbox and button 
+```php
+class TextboxAndButton extends ModUIComponent {
+  private $con;
+  public function __construct($con) {
+    $this->con = $con;
+  }
+  public function get_template_name($name) {
+    return $name;
+  }
+  public function get_templates($name) {
+    $template = <<<TMPL
+      <input id="{_name}" type="text" value="{value}">
+      <button id="{_name}-button">update</button>
+TMPL;
+    return [$this->get_template_name($name) => $template];
+  }
+  public function get_values($name) {
+    return ['value' => $this->_con->get('key')];
+  }
+  public function get_scripts($name) {
+    return [
+      'value' => 'function(selector){return $("#" + selector).val();}',
+      'event' => 'function(selector, update){$(document).on("click", "#" + selector + "-button", update);}'
+    ];
+  }
+  public function input($name, $value) {
+    // $name should be NULL.
+    $this->con->set('key', $value);
+  }
+}
+```
