@@ -111,7 +111,7 @@ function _modui_update_$name(){
     _modui_update("$name", _modui_get_value_$name());
 }
 function _modui_get_value_$name(){
-    return !$value_script("$name");
+    return ($value_script("$name"));
 }
 $event_script
 $other_script
