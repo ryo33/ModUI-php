@@ -55,7 +55,7 @@ EOJS
     echo 'lwte.addTemplate("$name", "$template");
   }
   // If you use jQuery
-  echo '$("body").text(lwte.useTemplate("example", "' . json_encode($result['values']) . '"))';
+  echo '$("body").text(lwte.useTemplate("TEMPLATE_NAME", "' . json_encode($result['values']) . '"))';
   echo $result['script'];
   echo '</script>';
   // Print footer of your page.
