@@ -2,7 +2,7 @@
 
 abstract class ModUIContainer extends ModUIComponent{
 
-    protected $component;
+    protected $components;
     protected $hooks;
     public function __construct(){
         $this->components = [];
